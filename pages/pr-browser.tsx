@@ -13,6 +13,9 @@ import {
   Drawer,
   DrawerHeader,
   DrawerItems,
+  Modal,
+  ModalHeader,
+  ModalBody,
 } from "flowbite-react";
 import React, { useState, useEffect, useRef } from "react";
 import { PiCaretRightThin, PiGithubLogo } from "react-icons/pi";
@@ -84,13 +87,11 @@ const LiveTimer: React.FC<{ startTime: string }> = ({ startTime }) => {
     const updateElapsed = () => {
       const start = new Date(startTime).getTime();
       const now = Date.now();
-
       setElapsed(Math.floor((now - start) / 1000));
     };
 
     updateElapsed();
     const interval = setInterval(updateElapsed, 1000);
-
     return () => clearInterval(interval);
   }, [startTime]);
 
@@ -138,16 +139,18 @@ const PRBrowser: React.FC = () => {
   });
 
   const [ghToken, setGhToken] = useState<string>("");
+  const [showModal, setShowModal] = useState<boolean>(false);
 
+  // On mount, check for the GitHub token in sessionStorage.
   useEffect(() => {
     const storedToken = sessionStorage.getItem("gh_t");
-
     if (storedToken) {
       setGhToken(storedToken);
+    } else {
+      // No token? Show the modal immediately.
+      setShowModal(true);
     }
   }, []);
-
-  // Use session storage for the GitHub token
 
   const [page, setPage] = useState<number>(1);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
@@ -155,8 +158,8 @@ const PRBrowser: React.FC = () => {
   const [refreshInterval, setRefreshInterval] = useState(120000);
   const { data, error, mutate, isValidating, isLoading } = useSWR<PRResponse>(
     router.isReady && apiUrl.current ? [apiUrl.current] : null,
-    (url) => fetcher(url as any, ghToken || ""),
-    { refreshInterval },
+    (url) => fetcher(url as string, ghToken || ""),
+    { refreshInterval }
   );
 
   useEffect(() => {
@@ -194,6 +197,7 @@ const PRBrowser: React.FC = () => {
     if (perPage) setValue("perPage", parseInt(perPage as string, 10));
     if (qsPage) setPage(parseInt(qsPage as string, 10));
 
+    // Optionally, you might auto-apply filters if all parameters are set.
     if (!data) {
       if (
         sessionStorage.getItem("gh_t") &&
@@ -215,6 +219,7 @@ const PRBrowser: React.FC = () => {
     repo: string;
     perPage: number;
   }) => {
+    // Save the token to sessionStorage on every filter application.
     sessionStorage.setItem("gh_t", ghToken);
     const { dates, status, selectedAuthors, repo, perPage } = formData;
     const params = new URLSearchParams();
@@ -242,7 +247,7 @@ const PRBrowser: React.FC = () => {
         },
       },
       undefined,
-      { shallow: true },
+      { shallow: true }
     );
     setIsDrawerOpen(false);
     mutate();
@@ -281,14 +286,10 @@ const PRBrowser: React.FC = () => {
               placeholder="Enter GitHub token"
               type="password"
               value={ghToken}
-              onValueChange={(value) => {
-                setGhToken(value);
-              }}
+              onValueChange={(value) => setGhToken(value)}
+              description="The GH Token is stored only in your browser's session
+              storage. We do not save it on our servers."
             />
-            <p className="text-tiny">
-              The GH Token is stored only in your browser&apos;s session
-              storage. We do not save it on our servers.
-            </p>
           </div>
 
           {/* Filter Controls Section */}
@@ -333,6 +334,7 @@ const PRBrowser: React.FC = () => {
               label="Authors"
               placeholder="Select Author(s)"
               {...register("selectedAuthors")}
+              description="You can add multiple authors by separating each GitHub handle with a semicolon (;)"
             />
 
             <Controller
@@ -343,9 +345,7 @@ const PRBrowser: React.FC = () => {
                   label="Repository"
                   placeholder="Enter a repository"
                   value={field.value}
-                  onValueChange={(value) => {
-                    field.onChange(value);
-                  }}
+                  onValueChange={(value) => field.onChange(value)}
                 />
               )}
             />
@@ -372,6 +372,119 @@ const PRBrowser: React.FC = () => {
   return (
     <div>
       <TheDrawer />
+
+      {/* Modal shown on first load when no GitHub token is present */}
+      {showModal && (
+        <Modal
+          show={showModal}
+          onClose={() => {
+            /* Prevent closing until settings applied */
+          }}
+          theme={{ header: { close: { base: "hidden" } } }}
+        >
+          <ModalHeader>Setup Your Dashboard</ModalHeader>
+          <ModalBody>
+            <div className="space-y-4">
+              {/* Github Settings Section */}
+              <div className="mb-6">
+                <h3 className="text-lg font-bold mb-2">Github Settings</h3>
+                <Input
+                  data-1p-ignore
+                  autoComplete="off"
+                  label="GitHub Token"
+                  placeholder="Enter GitHub token"
+                  type="password"
+                  value={ghToken}
+                  onValueChange={(value) => setGhToken(value)}
+                  description="The GH Token is stored only in your browser's session
+              storage. We do not save it on our servers."
+                />
+              </div>
+
+              {/* Filter Controls Section */}
+              <form
+                autoComplete="off"
+                className="flex flex-col gap-4"
+                onSubmit={handleSubmit((data) => {
+                  applyFilters(data);
+                  setShowModal(false);
+                })}
+              >
+                <h3 className="text-lg font-bold">Filter Controls</h3>
+                <Controller
+                  control={control}
+                  name="dates"
+                  render={({ field }) => (
+                    <DateRangePicker
+                      label="Date range"
+                      value={field.value}
+                      visibleMonths={3}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
+
+                <Controller
+                  control={control}
+                  name="status"
+                  render={({ field }) => (
+                    <Select
+                      defaultSelectedKeys={[field.value]}
+                      label="Status"
+                      placeholder="Select Status"
+                      value={field.value}
+                      onChange={field.onChange}
+                    >
+                      {statuses.map((s) => (
+                        <SelectItem key={s.value}>{s.label}</SelectItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+
+                <Input
+                  label="Authors"
+                  placeholder="Select Author(s)"
+                  {...register("selectedAuthors")}
+                  description="You can add multiple authors by separating each GitHub handle with a semicolon (;)"
+                />
+
+                <Controller
+                  control={control}
+                  name="repo"
+                  render={({ field }) => (
+                    <Input
+                      label="Repository"
+                      placeholder="Enter a repository"
+                      value={field.value}
+                      onValueChange={(value) => field.onChange(value)}
+                    />
+                  )}
+                />
+
+                <Controller
+                  control={control}
+                  name="perPage"
+                  render={({ field }) => (
+                    <NumberInput
+                      label="Results per Page"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
+
+                <Button type="submit">Apply Filters</Button>
+              </form>
+            </div>
+            <p className="mt-4 text-xs text-gray-500">
+              You can access the settings and filters on the left side in the
+              future.
+            </p>
+          </ModalBody>
+        </Modal>
+      )}
+
       {error ||
         (data?.error && (
           <pre className="max-w-full whitespace-pre-wrap">
@@ -383,7 +496,7 @@ const PRBrowser: React.FC = () => {
         {(data?.pullRequests ?? []).map((pr, index) => (
           <Card
             key={pr.number}
-            className={` p-5 flex flex-col relative ${getBgColor(pr)}`}
+            className={`p-5 flex flex-col relative ${getBgColor(pr)}`}
           >
             <CardBody>
               <div className="flex justify-between items-center">
@@ -407,7 +520,7 @@ const PRBrowser: React.FC = () => {
               <p>
                 #{pr.number} by <b>{pr.author}</b>
               </p>
-              <Timeline className=" border pt-8 rounded">
+              <Timeline className="border pt-8 rounded">
                 <TimelineItem>
                   <TimelinePoint />
                   <TimelineContent>
@@ -478,11 +591,11 @@ const PRBrowser: React.FC = () => {
               <div className="w-full flex flex-col items-center mt-4">
                 <div className="flex items-center w-full">
                   <span>#{index + 1}</span>
-                  <div className=" flex-1 w-full items-center justify-items-center">
+                  <div className="flex-1 w-full items-center justify-items-center">
                     <p className="font-bold text-xl">Total Time</p>
                   </div>
                 </div>
-                <p className={`font-extrabold text-5xl`}>
+                <p className="font-extrabold text-5xl">
                   {pr.metrics.totalTimeToClose !== null ? (
                     formatDuration(pr.metrics.totalTimeToClose)
                   ) : (
