@@ -1,7 +1,6 @@
 import { Link } from "@heroui/link";
-import { Snippet } from "@heroui/snippet";
-import { Code } from "@heroui/code";
 import { button as buttonStyles } from "@heroui/theme";
+import { FaGithub } from "react-icons/fa";
 
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
@@ -12,47 +11,41 @@ export default function IndexPage() {
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-        <div className="inline-block max-w-xl text-center justify-center">
-          <span className={title()}>Make&nbsp;</span>
-          <span className={title({ color: "violet" })}>beautiful&nbsp;</span>
-          <br />
-          <span className={title()}>
-            websites regardless of your design experience.
-          </span>
-          <div className={subtitle({ class: "mt-4" })}>
-            Beautiful, fast and modern React UI library.
-          </div>
+        {/* Hero Icon */}
+        <div className="flex flex-col items-center">
+          <FaGithub size={80} className="text-gray-800" />
         </div>
 
-        <div className="flex gap-3">
+        {/* Product Title and Description */}
+        <div className="inline-block max-w-xl text-center">
+          <span className={title()}>GitHub </span>
+          <span className={title({ color: "violet" })}>PR Buddy</span>
+          <p className={subtitle({ class: "mt-4" })}>
+            The ultimate dashboard to monitor, filter, and manage your GitHub
+            pull requests.
+          </p>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex gap-3 mt-6">
           <Link
-            isExternal
             className={buttonStyles({
               color: "primary",
               radius: "full",
               variant: "shadow",
             })}
-            href={siteConfig.links.docs}
+            href="/pr-browser"
           >
-            Documentation
+            Create your dashboard
           </Link>
           <Link
             isExternal
             className={buttonStyles({ variant: "bordered", radius: "full" })}
-            href={siteConfig.links.github}
+            href={"https://github.com/thomsa/github-pr-buddy"}
           >
             <GithubIcon size={20} />
             GitHub
           </Link>
-        </div>
-
-        <div className="mt-8">
-          <Snippet hideCopyButton hideSymbol variant="bordered">
-            <span>
-              Get started by editing{" "}
-              <Code color="primary">pages/index.tsx</Code>
-            </span>
-          </Snippet>
         </div>
       </section>
     </DefaultLayout>

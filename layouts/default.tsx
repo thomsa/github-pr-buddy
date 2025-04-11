@@ -1,31 +1,27 @@
-import { Link } from "@heroui/link";
-
 import { Head } from "./head";
-
-import { Navbar } from "@/components/navbar";
 
 export default function DefaultLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const currentYear = new Date().getFullYear();
+  const yearRange = currentYear > 2025 ? `2025 – ${currentYear}` : "2025";
+
   return (
     <div className="relative flex flex-col h-screen">
       <Head />
-      <Navbar />
       <main className="container mx-auto max-w-7xl px-6 flex-grow pt-16">
         {children}
       </main>
-      <footer className="w-full flex items-center justify-center py-3">
-        <Link
-          isExternal
-          className="flex items-center gap-1 text-current"
-          href="https://www.heroui.com"
-          title="heroui.com homepage"
-        >
-          <span className="text-default-600">Powered by</span>
-          <p className="text-primary">HeroUI</p>
-        </Link>
+      <footer className="w-full flex items-center justify-center py-3 flex-col">
+        <p className="text-sm text-gray-600">
+          GitHub PR Buddy is an open-source project. You can run it on your own
+          environment.
+        </p>
+        <p className="text-xs text-gray-600">
+          <time dateTime="2025">{yearRange}</time>
+        </p>
       </footer>
     </div>
   );

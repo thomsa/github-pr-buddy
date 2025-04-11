@@ -285,7 +285,7 @@ const PRBrowser: React.FC = () => {
                 setGhToken(value);
               }}
             />
-            <p>
+            <p className="text-tiny">
               The GH Token is stored only in your browser&apos;s session
               storage. We do not save it on our servers.
             </p>
