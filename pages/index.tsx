@@ -2,7 +2,6 @@ import { Link } from "@heroui/link";
 import { button as buttonStyles } from "@heroui/theme";
 import { FaGithub } from "react-icons/fa";
 
-import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
 import { GithubIcon } from "@/components/icons";
 import DefaultLayout from "@/layouts/default";
@@ -13,7 +12,7 @@ export default function IndexPage() {
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
         {/* Hero Icon */}
         <div className="flex flex-col items-center">
-          <FaGithub size={80} className="text-gray-800" />
+          <FaGithub className="text-gray-800" size={80} />
         </div>
 
         {/* Product Title and Description */}

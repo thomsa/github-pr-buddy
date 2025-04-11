@@ -87,11 +87,13 @@ const LiveTimer: React.FC<{ startTime: string }> = ({ startTime }) => {
     const updateElapsed = () => {
       const start = new Date(startTime).getTime();
       const now = Date.now();
+
       setElapsed(Math.floor((now - start) / 1000));
     };
 
     updateElapsed();
     const interval = setInterval(updateElapsed, 1000);
+
     return () => clearInterval(interval);
   }, [startTime]);
 
@@ -144,6 +146,7 @@ const PRBrowser: React.FC = () => {
   // On mount, check for the GitHub token in sessionStorage.
   useEffect(() => {
     const storedToken = sessionStorage.getItem("gh_t");
+
     if (storedToken) {
       setGhToken(storedToken);
     } else {
@@ -158,8 +161,8 @@ const PRBrowser: React.FC = () => {
   const [refreshInterval, setRefreshInterval] = useState(120000);
   const { data, error, mutate, isValidating, isLoading } = useSWR<PRResponse>(
     router.isReady && apiUrl.current ? [apiUrl.current] : null,
-    (url) => fetcher(url as string, ghToken || ""),
-    { refreshInterval }
+    (url) => fetcher(url as unknown as string, ghToken || ""),
+    { refreshInterval },
   );
 
   useEffect(() => {
@@ -247,7 +250,7 @@ const PRBrowser: React.FC = () => {
         },
       },
       undefined,
-      { shallow: true }
+      { shallow: true },
     );
     setIsDrawerOpen(false);
     mutate();
@@ -282,13 +285,13 @@ const PRBrowser: React.FC = () => {
             <Input
               data-1p-ignore
               autoComplete="off"
+              description="The GH Token is stored only in your browser's session
+              storage. We do not save it on our servers."
               label="GitHub Token"
               placeholder="Enter GitHub token"
               type="password"
               value={ghToken}
               onValueChange={(value) => setGhToken(value)}
-              description="The GH Token is stored only in your browser's session
-              storage. We do not save it on our servers."
             />
           </div>
 
@@ -377,10 +380,10 @@ const PRBrowser: React.FC = () => {
       {showModal && (
         <Modal
           show={showModal}
+          theme={{ header: { close: { base: "hidden" } } }}
           onClose={() => {
             /* Prevent closing until settings applied */
           }}
-          theme={{ header: { close: { base: "hidden" } } }}
         >
           <ModalHeader>Setup Your Dashboard</ModalHeader>
           <ModalBody>
@@ -391,13 +394,13 @@ const PRBrowser: React.FC = () => {
                 <Input
                   data-1p-ignore
                   autoComplete="off"
+                  description="The GH Token is stored only in your browser's session
+              storage. We do not save it on our servers."
                   label="GitHub Token"
                   placeholder="Enter GitHub token"
                   type="password"
                   value={ghToken}
                   onValueChange={(value) => setGhToken(value)}
-                  description="The GH Token is stored only in your browser's session
-              storage. We do not save it on our servers."
                 />
               </div>
 
