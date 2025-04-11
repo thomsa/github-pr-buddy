@@ -156,7 +156,7 @@ const PRBrowser: React.FC = () => {
   const { data, error, mutate, isValidating, isLoading } = useSWR<PRResponse>(
     router.isReady && apiUrl.current ? [apiUrl.current] : null,
     (url) => fetcher(url as any, ghToken || ""),
-    { refreshInterval }
+    { refreshInterval },
   );
 
   useEffect(() => {
@@ -242,7 +242,7 @@ const PRBrowser: React.FC = () => {
         },
       },
       undefined,
-      { shallow: true }
+      { shallow: true },
     );
     setIsDrawerOpen(false);
     mutate();

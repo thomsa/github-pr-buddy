@@ -40,7 +40,7 @@ type Data =
 async function getPRDetails(
   pr: any,
   token: string,
-  res: any
+  res: any,
 ): Promise<PRReturn | null> {
   const prUrl: string = pr.pull_request.url;
   const prDetailsResp = await fetch(prUrl, {
@@ -104,13 +104,13 @@ async function getPRDetails(
       author: c.user.login,
       createdAt: c.created_at,
       body: c.body,
-    })
+    }),
   );
   const timeline: PRTimelineItem[] = [
     ...reviewsFormatted,
     ...commentsFormatted,
   ].sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
   );
 
   const createdAtDate = new Date(pr.created_at);
@@ -122,7 +122,7 @@ async function getPRDetails(
       ? reviewsFormatted.reduce((prev, cur) =>
           new Date(cur.createdAt).getTime() < new Date(prev.createdAt).getTime()
             ? cur
-            : prev
+            : prev,
         )
       : null;
   const timeToFirstReview = firstReview
@@ -142,7 +142,7 @@ async function getPRDetails(
     const commitAfterReview = (commits || []).find(
       (commit: any) =>
         new Date(commit.commit.author.date).getTime() >
-        firstReviewTime.getTime()
+        firstReviewTime.getTime(),
     );
 
     if (commitAfterReview) {
@@ -178,7 +178,7 @@ async function getPRDetails(
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<Data>,
 ) {
   const {
     repo,
@@ -250,10 +250,10 @@ export default async function handler(
     const prs = searchData.items as any[];
 
     const detailedPRsArr = await Promise.all(
-      prs.map((pr) => getPRDetails(pr, token, res))
+      prs.map((pr) => getPRDetails(pr, token, res)),
     );
     const detailedPRs = detailedPRsArr.filter(
-      (pr): pr is PRReturn => pr !== null
+      (pr): pr is PRReturn => pr !== null,
     );
     const authorSet = new Set<string>();
 
