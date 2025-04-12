@@ -9,22 +9,22 @@ import {
   useDisclosure,
 } from "@heroui/modal";
 import React, { useState, useEffect, useRef } from "react";
-import { PiCaretRightThin, PiGithubLogo } from "react-icons/pi";
+import { PiCaretRightThin } from "react-icons/pi";
 import { useLoadingBar } from "react-top-loading-bar";
 import { Masonry } from "@mui/lab";
 import useSWR from "swr";
 import { parseDate } from "@internationalized/date";
 import { addMonths } from "date-fns";
 import { useForm } from "react-hook-form";
-
-import { FilterForm, FilterFormValues } from "../components/FilterForm";
-import { PRTile, PRReturn } from "../components/PRTile";
 import {
   Drawer,
   DrawerBody,
   DrawerContent,
   DrawerHeader,
 } from "@heroui/drawer";
+
+import { FilterForm, FilterFormValues } from "../components/FilterForm";
+import { PRTile, PRReturn } from "../components/PRTile";
 
 type PRMetric = {
   timeToFirstReview: number | null;
@@ -112,7 +112,7 @@ const PRBrowser: React.FC = () => {
   const { data, error, mutate, isValidating, isLoading } = useSWR<PRResponse>(
     router.isReady && apiUrl.current ? [apiUrl.current] : null,
     (url) => fetcher(url as unknown as string, ghToken || ""),
-    { refreshInterval }
+    { refreshInterval },
   );
 
   useEffect(() => {
@@ -193,7 +193,7 @@ const PRBrowser: React.FC = () => {
         },
       },
       undefined,
-      { shallow: true }
+      { shallow: true },
     );
     onCloseDrawer();
     mutate();
@@ -209,7 +209,7 @@ const PRBrowser: React.FC = () => {
       >
         <PiCaretRightThin className="h-6 w-6" />
       </Button>
-      <Drawer isOpen={isDrawerOpen} onClose={onCloseDrawer} placement="left">
+      <Drawer isOpen={isDrawerOpen} placement="left" onClose={onCloseDrawer}>
         <DrawerContent>
           <DrawerHeader>Dashboard Settings</DrawerHeader>
           <DrawerBody>

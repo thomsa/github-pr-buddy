@@ -69,11 +69,13 @@ const LiveTimer: React.FC<{ startTime: string }> = ({ startTime }) => {
     const updateElapsed = () => {
       const start = new Date(startTime).getTime();
       const now = Date.now();
+
       setElapsed(Math.floor((now - start) / 1000));
     };
 
     updateElapsed();
     const interval = setInterval(updateElapsed, 1000);
+
     return () => clearInterval(interval);
   }, [startTime]);
 
@@ -89,15 +91,18 @@ const getBgColor = (pr: PRReturn): string => {
   const now = Date.now();
   const elapsedHours = (now - createdTime) / (3600 * 1000);
 
-  if (elapsedHours > 36) return "bg-red-600 text-white";
-  if (elapsedHours > 12) return "bg-orange-300";
+  if (elapsedHours > 36) return "bg-red-700 text-white";
+  if (elapsedHours > 12) return "bg-yellow-500 text-white";
 
   return "";
 };
 
 export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
   return (
-    <Card className={`p-5 flex flex-col relative ${getBgColor(pr)}`}>
+    <Card
+      className={`p-5 flex flex-col relative ${getBgColor(pr)}`}
+      shadow="lg"
+    >
       <CardBody>
         <div className="flex justify-between items-center">
           <h2 className="text-large font-bold underline">
@@ -120,14 +125,14 @@ export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
         <p>
           #{pr.number} by <b>{pr.author}</b>
         </p>
-        <Timeline className="border pt-8 rounded">
+        <Timeline className="border pt-8 rounded ">
           <TimelineItem>
             <TimelinePoint />
             <TimelineContent>
               <TimelineTime>
                 <Chip variant="bordered">Opened</Chip>
               </TimelineTime>
-              <TimelineTitle className="text-3xl">
+              <TimelineTitle className={`text-3xl ${getBgColor(pr)}`}>
                 {new Date(pr.createdAt).toLocaleString()}
               </TimelineTitle>
             </TimelineContent>
@@ -141,7 +146,7 @@ export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
                     First Review
                   </Chip>
                 </TimelineTime>
-                <TimelineTitle className="text-3xl">
+                <TimelineTitle className={`text-3xl ${getBgColor(pr)}`}>
                   +{formatDuration(pr.metrics.timeToFirstReview)}
                 </TimelineTitle>
               </TimelineContent>
@@ -154,7 +159,7 @@ export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
                 <TimelineTime>
                   <Chip color="primary">First Code Update</Chip>
                 </TimelineTime>
-                <TimelineTitle className="text-3xl">
+                <TimelineTitle className={`text-3xl ${getBgColor(pr)}`}>
                   +{formatDuration(pr.metrics.timeToFirstCodeUpdate)}
                 </TimelineTitle>
               </TimelineContent>
@@ -167,7 +172,7 @@ export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
                 <TimelineTime>
                   <Chip color="success">First Approval</Chip>
                 </TimelineTime>
-                <TimelineTitle className="text-3xl">
+                <TimelineTitle className={`text-3xl ${getBgColor(pr)}`}>
                   +{formatDuration(pr.metrics.timeToFirstApproval)}
                 </TimelineTitle>
               </TimelineContent>
@@ -180,7 +185,7 @@ export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
                 <TimelineTime>
                   <Chip color="secondary">Closed At</Chip>
                 </TimelineTime>
-                <TimelineTitle className="text-3xl">
+                <TimelineTitle className={`text-3xl ${getBgColor(pr)}`}>
                   {new Date(pr.closedAt).toLocaleString()}
                 </TimelineTitle>
               </TimelineContent>

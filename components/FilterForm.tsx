@@ -19,7 +19,7 @@ interface FilterFormProps {
   control: any;
   register: any;
   handleSubmit: (
-    fn: (data: FilterFormValues) => void
+    fn: (data: FilterFormValues) => void,
   ) => (e?: React.BaseSyntheticEvent) => Promise<void>;
 }
 
