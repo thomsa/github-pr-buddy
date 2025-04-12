@@ -25,6 +25,7 @@ import {
 
 import { FilterForm, FilterFormValues } from "../components/FilterForm";
 import { PRTile, PRReturn } from "../components/PRTile";
+import { Spinner } from "flowbite-react";
 
 type PRMetric = {
   timeToFirstReview: number | null;
@@ -150,6 +151,10 @@ const PRBrowser: React.FC = () => {
     if (perPage) setValue("perPage", parseInt(perPage as string, 10));
     if (qsPage) setPage(parseInt(qsPage as string, 10));
 
+    if (!repo) {
+      setShowModal(true);
+    }
+
     if (!data) {
       if (
         localStorage.getItem("gh_t") &&
@@ -243,6 +248,11 @@ const PRBrowser: React.FC = () => {
 
   return (
     <div>
+      {!data && (
+        <div className="w-full h-screen flex items-center justify-center">
+          <Spinner />
+        </div>
+      )}
       <TheDrawer />
       {/* Modal shown on first load if no GitHub token is present */}
       {showModal && (

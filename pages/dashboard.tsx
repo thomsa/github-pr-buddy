@@ -39,6 +39,7 @@ import { PRTile } from "../components/PRTile";
 import MetricsCard from "../components/MetricsCard";
 import { SmallPrTile } from "@/components/SmallPRTIle";
 import { formatDuration } from "@/utils/formatDuration";
+import { Spinner } from "flowbite-react";
 
 export type PRReturnType = {
   number: number;
@@ -169,6 +170,10 @@ const Dashboard: React.FC = () => {
     if (perPage) setValue("perPage", parseInt(perPage as string, 10));
     if (qsPage) setPage(parseInt(qsPage as string, 10));
 
+    if (!repo) {
+      setShowModal(true);
+    }
+
     if (!data) {
       if (
         localStorage.getItem("gh_t") &&
@@ -291,7 +296,6 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="p-4">
-      <h3 className="font-bold text-xl">Pull Requests ({getValues("repo")})</h3>
       <TheDrawer />
       {showModal && (
         <Modal
@@ -346,118 +350,145 @@ const Dashboard: React.FC = () => {
         </pre>
       )}
 
-      {/* Aggregated Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 my-4">
-        <MetricsCard
-          avg={data?.aggregated?.timeToFirstReview.average || null}
-          median={data?.aggregated?.timeToFirstReview.median || null}
-          title="First Review Time"
-        />
-        <MetricsCard
-          avg={data?.aggregated?.timeToFirstApproval.average || null}
-          median={data?.aggregated?.timeToFirstApproval.median || null}
-          title="First Approval Time"
-        />
-        <MetricsCard
-          avg={data?.aggregated?.timeToFirstCodeUpdate.average || null}
-          median={data?.aggregated?.timeToFirstCodeUpdate.median || null}
-          title="First Code Update Time"
-        />
-        <MetricsCard
-          avg={data?.aggregated?.totalTimeToClose.average || null}
-          median={data?.aggregated?.totalTimeToClose.median || null}
-          title="Total Time to Close"
-        />
-      </div>
+      {!data && (
+        <div className="w-full h-screen flex items-center justify-center">
+          <Spinner />
+        </div>
+      )}
 
-      {/* Bar Charts for Individual PR Metrics Wrapped in Heroui Card */}
-      <Card className="my-8">
-        <CardHeader>First Review Time per PR</CardHeader>
-        <Divider />
-        <CardBody>
-          <ResponsiveContainer height={400} width="100%">
-            <BarChart data={prepareChartData("timeToFirstReview")}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis
-                label={{ value: "Seconds", angle: -90, position: "insideLeft" }}
-              />
-              <Tooltip
-                content={<CustomTooltip />}
-                trigger="click"
-                wrapperStyle={{ pointerEvents: "auto" }}
-              />
-              <Bar dataKey="value" fill="#8884d8" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardBody>
-      </Card>
+      {data && (
+        <>
+          <h3 className="font-bold text-xl">
+            Pull Requests ({getValues("repo")})
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 my-4">
+            <MetricsCard
+              avg={data?.aggregated?.timeToFirstReview.average || null}
+              median={data?.aggregated?.timeToFirstReview.median || null}
+              title="First Review Time"
+            />
+            <MetricsCard
+              avg={data?.aggregated?.timeToFirstApproval.average || null}
+              median={data?.aggregated?.timeToFirstApproval.median || null}
+              title="First Approval Time"
+            />
+            <MetricsCard
+              avg={data?.aggregated?.timeToFirstCodeUpdate.average || null}
+              median={data?.aggregated?.timeToFirstCodeUpdate.median || null}
+              title="First Code Update Time"
+            />
+            <MetricsCard
+              avg={data?.aggregated?.totalTimeToClose.average || null}
+              median={data?.aggregated?.totalTimeToClose.median || null}
+              title="Total Time to Close"
+            />
+          </div>
 
-      <Card className="my-8">
-        <CardHeader>First Approval Time per PR</CardHeader>
-        <Divider />
-        <CardBody>
-          <ResponsiveContainer height={400} width="100%">
-            <BarChart data={prepareChartData("timeToFirstApproval")}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis
-                label={{ value: "Seconds", angle: -90, position: "insideLeft" }}
-              />
-              <Tooltip
-                content={<CustomTooltip />}
-                trigger="click"
-                wrapperStyle={{ pointerEvents: "auto" }}
-              />
-              <Bar dataKey="value" fill="#82ca9d" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardBody>
-      </Card>
+          <Card className="my-8">
+            <CardHeader>First Review Time per PR</CardHeader>
+            <Divider />
+            <CardBody>
+              <ResponsiveContainer height={400} width="100%">
+                <BarChart data={prepareChartData("timeToFirstReview")}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis
+                    label={{
+                      value: "Seconds",
+                      angle: -90,
+                      position: "insideLeft",
+                    }}
+                  />
+                  <Tooltip
+                    content={<CustomTooltip />}
+                    trigger="click"
+                    wrapperStyle={{ pointerEvents: "auto" }}
+                  />
+                  <Bar dataKey="value" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardBody>
+          </Card>
 
-      <Card className="my-8">
-        <CardHeader>First Code Update Time per PR</CardHeader>
-        <Divider />
-        <CardBody>
-          <ResponsiveContainer height={400} width="100%">
-            <BarChart data={prepareChartData("timeToFirstCodeUpdate")}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis
-                label={{ value: "Seconds", angle: -90, position: "insideLeft" }}
-              />
-              <Tooltip
-                content={<CustomTooltip />}
-                trigger="click"
-                wrapperStyle={{ pointerEvents: "auto" }}
-              />
-              <Bar dataKey="value" fill="#ffc658" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardBody>
-      </Card>
+          <Card className="my-8">
+            <CardHeader>First Approval Time per PR</CardHeader>
+            <Divider />
+            <CardBody>
+              <ResponsiveContainer height={400} width="100%">
+                <BarChart data={prepareChartData("timeToFirstApproval")}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis
+                    label={{
+                      value: "Seconds",
+                      angle: -90,
+                      position: "insideLeft",
+                    }}
+                  />
+                  <Tooltip
+                    content={<CustomTooltip />}
+                    trigger="click"
+                    wrapperStyle={{ pointerEvents: "auto" }}
+                  />
+                  <Bar dataKey="value" fill="#82ca9d" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardBody>
+          </Card>
 
-      <Card className="my-8">
-        <CardHeader>Total Time to Close per PR</CardHeader>
-        <Divider />
-        <CardBody>
-          <ResponsiveContainer height={400} width="100%">
-            <BarChart data={prepareChartData("totalTimeToClose")}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis
-                label={{ value: "Seconds", angle: -90, position: "insideLeft" }}
-              />
-              <Tooltip
-                content={<CustomTooltip />}
-                trigger="click"
-                wrapperStyle={{ pointerEvents: "auto" }}
-              />
-              <Bar dataKey="value" fill="#d0ed57" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardBody>
-      </Card>
+          <Card className="my-8">
+            <CardHeader>First Code Update Time per PR</CardHeader>
+            <Divider />
+            <CardBody>
+              <ResponsiveContainer height={400} width="100%">
+                <BarChart data={prepareChartData("timeToFirstCodeUpdate")}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis
+                    label={{
+                      value: "Seconds",
+                      angle: -90,
+                      position: "insideLeft",
+                    }}
+                  />
+                  <Tooltip
+                    content={<CustomTooltip />}
+                    trigger="click"
+                    wrapperStyle={{ pointerEvents: "auto" }}
+                  />
+                  <Bar dataKey="value" fill="#ffc658" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardBody>
+          </Card>
+
+          <Card className="my-8">
+            <CardHeader>Total Time to Close per PR</CardHeader>
+            <Divider />
+            <CardBody>
+              <ResponsiveContainer height={400} width="100%">
+                <BarChart data={prepareChartData("totalTimeToClose")}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis
+                    label={{
+                      value: "Seconds",
+                      angle: -90,
+                      position: "insideLeft",
+                    }}
+                  />
+                  <Tooltip
+                    content={<CustomTooltip />}
+                    trigger="click"
+                    wrapperStyle={{ pointerEvents: "auto" }}
+                  />
+                  <Bar dataKey="value" fill="#d0ed57" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardBody>
+          </Card>
+        </>
+      )}
     </div>
   );
 };
