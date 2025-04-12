@@ -12,7 +12,6 @@ import {
 import React, { useState, useEffect, useRef } from "react";
 import { PiCaretRightThin } from "react-icons/pi";
 import { useLoadingBar } from "react-top-loading-bar";
-import { Masonry } from "@mui/lab";
 import useSWR from "swr";
 import { parseDate } from "@internationalized/date";
 import { addMonths } from "date-fns";
@@ -36,9 +35,9 @@ import {
 } from "recharts";
 
 import { FilterForm, FilterFormValues } from "../components/FilterForm";
-import { PRTile, PRReturn } from "../components/PRTile";
+import { PRTile } from "../components/PRTile";
 import MetricsCard from "../components/MetricsCard";
-
+import { SmallPrTile } from "@/components/SmallPRTIle";
 import { formatDuration } from "@/utils/formatDuration";
 
 export type PRReturnType = {
@@ -108,8 +107,8 @@ const Dashboard: React.FC = () => {
       },
       status: "all",
       selectedAuthors: "",
-      repo: "owner/repo",
-      perPage: 6,
+      repo: "",
+      perPage: 1000,
     },
   });
 
@@ -232,20 +231,22 @@ const Dashboard: React.FC = () => {
         <DrawerContent>
           <DrawerHeader>Dashboard Settings</DrawerHeader>
           <DrawerBody>
-            <div className="mb-6">
-              <h3 className="text-lg font-bold mb-2">GitHub Settings</h3>
+            <div>
+              <h3 className="text-lg font-bold">GitHub Settings</h3>
               <Input
                 data-1p-ignore
                 autoComplete="off"
                 description="The GH Token is stored only in your browser's local storage. We do not save it on our servers."
                 label="GitHub Token"
                 placeholder="Enter GitHub token"
+                isRequired
                 type="password"
                 value={ghToken}
                 onValueChange={(value) => setGhToken(value)}
               />
             </div>
             <FilterForm
+              ghToken={ghToken}
               control={control}
               handleSubmit={handleSubmit}
               register={register}
@@ -257,18 +258,40 @@ const Dashboard: React.FC = () => {
     </>
   );
 
-  // Prepare data for each bar chart from the individual PR metrics
+  // Modified chart data: include the complete PR object for custom tooltip rendering
   const prepareChartData = (metricKey: keyof PRReturnType["metrics"]) => {
     return (data?.pullRequests || [])
       .filter((pr) => pr.metrics[metricKey] !== null)
       .map((pr) => ({
         name: `#${pr.number}`,
         value: pr.metrics[metricKey] as number,
+        pr, // full PR object for tooltip
       }));
+  };
+
+  // Custom tooltip component that shows additional PR details
+  const CustomTooltip = ({
+    active,
+    payload,
+  }: {
+    active?: boolean;
+    payload?: any[];
+  }) => {
+    if (active && payload && payload.length) {
+      const { pr, value } = payload[0].payload;
+      const approvedEvent = pr.timeline.find(
+        (item: any) => item.type === "review" && item.state === "APPROVED"
+      );
+
+      return <SmallPrTile index={0} pr={pr} />;
+    }
+
+    return null;
   };
 
   return (
     <div className="p-4">
+      <h3 className="font-bold text-xl">Pull Requests ({getValues("repo")})</h3>
       <TheDrawer />
       {showModal && (
         <Modal
@@ -283,8 +306,8 @@ const Dashboard: React.FC = () => {
             </ModalHeader>
             <ModalBody>
               <div className="space-y-4">
-                <div className="mb-6">
-                  <h3 className="text-lg font-bold mb-2">GitHub Settings</h3>
+                <div>
+                  <h3 className="text-lg font-bold">GitHub Settings</h3>
                   <Input
                     data-1p-ignore
                     autoComplete="off"
@@ -297,6 +320,7 @@ const Dashboard: React.FC = () => {
                   />
                 </div>
                 <FilterForm
+                  ghToken={ghToken}
                   control={control}
                   handleSubmit={handleSubmit}
                   register={register}
@@ -351,7 +375,7 @@ const Dashboard: React.FC = () => {
         <CardHeader>First Review Time per PR</CardHeader>
         <Divider />
         <CardBody>
-          <ResponsiveContainer height={300} width="100%">
+          <ResponsiveContainer height={400} width="100%">
             <BarChart data={prepareChartData("timeToFirstReview")}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
@@ -359,7 +383,9 @@ const Dashboard: React.FC = () => {
                 label={{ value: "Seconds", angle: -90, position: "insideLeft" }}
               />
               <Tooltip
-                formatter={(value) => formatDuration(parseInt(value as string))}
+                content={<CustomTooltip />}
+                trigger="click"
+                wrapperStyle={{ pointerEvents: "auto" }}
               />
               <Bar dataKey="value" fill="#8884d8" />
             </BarChart>
@@ -371,14 +397,18 @@ const Dashboard: React.FC = () => {
         <CardHeader>First Approval Time per PR</CardHeader>
         <Divider />
         <CardBody>
-          <ResponsiveContainer height={300} width="100%">
+          <ResponsiveContainer height={400} width="100%">
             <BarChart data={prepareChartData("timeToFirstApproval")}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis
                 label={{ value: "Seconds", angle: -90, position: "insideLeft" }}
               />
-              <Tooltip formatter={(value) => formatDuration(value as string)} />
+              <Tooltip
+                content={<CustomTooltip />}
+                trigger="click"
+                wrapperStyle={{ pointerEvents: "auto" }}
+              />
               <Bar dataKey="value" fill="#82ca9d" />
             </BarChart>
           </ResponsiveContainer>
@@ -389,14 +419,18 @@ const Dashboard: React.FC = () => {
         <CardHeader>First Code Update Time per PR</CardHeader>
         <Divider />
         <CardBody>
-          <ResponsiveContainer height={300} width="100%">
+          <ResponsiveContainer height={400} width="100%">
             <BarChart data={prepareChartData("timeToFirstCodeUpdate")}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis
                 label={{ value: "Seconds", angle: -90, position: "insideLeft" }}
               />
-              <Tooltip formatter={(value) => formatDuration(value as string)} />
+              <Tooltip
+                content={<CustomTooltip />}
+                trigger="click"
+                wrapperStyle={{ pointerEvents: "auto" }}
+              />
               <Bar dataKey="value" fill="#ffc658" />
             </BarChart>
           </ResponsiveContainer>
@@ -407,14 +441,18 @@ const Dashboard: React.FC = () => {
         <CardHeader>Total Time to Close per PR</CardHeader>
         <Divider />
         <CardBody>
-          <ResponsiveContainer height={300} width="100%">
+          <ResponsiveContainer height={400} width="100%">
             <BarChart data={prepareChartData("totalTimeToClose")}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis
                 label={{ value: "Seconds", angle: -90, position: "insideLeft" }}
               />
-              <Tooltip formatter={(value) => formatDuration(value as string)} />
+              <Tooltip
+                content={<CustomTooltip />}
+                trigger="click"
+                wrapperStyle={{ pointerEvents: "auto" }}
+              />
               <Bar dataKey="value" fill="#d0ed57" />
             </BarChart>
           </ResponsiveContainer>

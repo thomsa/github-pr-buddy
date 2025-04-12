@@ -89,17 +89,29 @@ export default function IndexPage() {
         </div>
 
         {/* Buttons */}
-        <div className="flex gap-3 mt-6">
-          <Link
-            className={buttonStyles({
-              color: "primary",
-              radius: "full",
-              variant: "shadow",
-            })}
-            href="/pr-browser"
-          >
-            Create your dashboard
-          </Link>
+        <div className="flex gap-3 mt-6  flex-col">
+          <div className="flex  gap-3  md:flex-row flex-col">
+            <Link
+              className={buttonStyles({
+                color: "primary",
+                radius: "full",
+                variant: "shadow",
+              })}
+              href="/pr-browser"
+            >
+              Create your Dashboard
+            </Link>
+            <Link
+              className={buttonStyles({
+                color: "secondary",
+                radius: "full",
+                variant: "shadow",
+              })}
+              href="/dashboard"
+            >
+              Check out your Metrics
+            </Link>
+          </div>
           <Link
             isExternal
             className={buttonStyles({ variant: "bordered", radius: "full" })}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Controller } from "react-hook-form";
+import { useWatch, Controller } from "react-hook-form";
 import { DateRangePicker } from "@heroui/date-picker";
 import { Select, SelectItem } from "@heroui/select";
 import { Input } from "@heroui/input";
@@ -19,8 +19,9 @@ interface FilterFormProps {
   control: any;
   register: any;
   handleSubmit: (
-    fn: (data: FilterFormValues) => void,
+    fn: (data: FilterFormValues) => void
   ) => (e?: React.BaseSyntheticEvent) => Promise<void>;
+  ghToken: string;
 }
 
 const statuses = [
@@ -35,13 +36,34 @@ export const FilterForm: React.FC<FilterFormProps> = ({
   control,
   register,
   handleSubmit,
+  ghToken,
 }) => {
+  // useWatch retrieves the current value of the repo field from the form
+  const repoValue = useWatch({ control, name: "repo" });
+
   return (
     <form
       autoComplete="off"
       className="flex flex-col gap-4"
       onSubmit={handleSubmit(onSubmit)}
     >
+      <Controller
+        control={control}
+        name="repo"
+        rules={{ required: "Repository is required" }}
+        render={({ field, fieldState: { error } }) => (
+          <>
+            <Input
+              label="Repository"
+              placeholder="owner/repo"
+              value={field.value}
+              isRequired
+              onValueChange={(value) => field.onChange(value)}
+              errorMessage={error ? error.message : undefined}
+            />
+          </>
+        )}
+      />
       <h3 className="text-lg font-bold">Filter Controls</h3>
       <Controller
         control={control}
@@ -83,19 +105,6 @@ export const FilterForm: React.FC<FilterFormProps> = ({
 
       <Controller
         control={control}
-        name="repo"
-        render={({ field }) => (
-          <Input
-            label="Repository"
-            placeholder="Enter a repository"
-            value={field.value}
-            onValueChange={(value) => field.onChange(value)}
-          />
-        )}
-      />
-
-      <Controller
-        control={control}
         name="perPage"
         render={({ field }) => (
           <NumberInput
@@ -106,7 +115,12 @@ export const FilterForm: React.FC<FilterFormProps> = ({
         )}
       />
 
-      <Button type="submit">Apply Filters</Button>
+      <Button
+        type="submit"
+        isDisabled={!ghToken || !repoValue || !repoValue.trim()}
+      >
+        Apply Filters
+      </Button>
     </form>
   );
 };

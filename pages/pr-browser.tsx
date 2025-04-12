@@ -87,7 +87,7 @@ const PRBrowser: React.FC = () => {
       },
       status: "all",
       selectedAuthors: "",
-      repo: "owner/repo",
+      repo: "",
       perPage: 6,
     },
   });
@@ -112,7 +112,7 @@ const PRBrowser: React.FC = () => {
   const { data, error, mutate, isValidating, isLoading } = useSWR<PRResponse>(
     router.isReady && apiUrl.current ? [apiUrl.current] : null,
     (url) => fetcher(url as unknown as string, ghToken || ""),
-    { refreshInterval },
+    { refreshInterval }
   );
 
   useEffect(() => {
@@ -193,7 +193,7 @@ const PRBrowser: React.FC = () => {
         },
       },
       undefined,
-      { shallow: true },
+      { shallow: true }
     );
     onCloseDrawer();
     mutate();
@@ -222,12 +222,14 @@ const PRBrowser: React.FC = () => {
                 description="The GH Token is stored only in your browser's local storage. We do not save it on our servers."
                 label="GitHub Token"
                 placeholder="Enter GitHub token"
+                isRequired
                 type="password"
                 value={ghToken}
                 onValueChange={(value) => setGhToken(value)}
               />
             </div>
             <FilterForm
+              ghToken={ghToken}
               control={control}
               handleSubmit={handleSubmit}
               register={register}
@@ -265,12 +267,14 @@ const PRBrowser: React.FC = () => {
                     description="The GH Token is stored only in your browser's local storage. We do not save it on our servers."
                     label="GitHub Token"
                     placeholder="Enter GitHub token"
+                    isRequired
                     type="password"
                     value={ghToken}
                     onValueChange={(value) => setGhToken(value)}
                   />
                 </div>
                 <FilterForm
+                  ghToken={ghToken}
                   control={control}
                   handleSubmit={handleSubmit}
                   register={register}
@@ -291,8 +295,8 @@ const PRBrowser: React.FC = () => {
 
       {(error || data?.error) && (
         <pre className="max-w-full whitespace-pre-wrap">
-          {error && JSON.stringify(JSON.parse(error), null, 4)}
-          {data?.error && JSON.stringify(JSON.parse(data?.error), null, 4)}
+          {error && JSON.stringify(error, null, 4)}
+          {data?.error && JSON.stringify(data?.error, null, 4)}
         </pre>
       )}
       <Masonry
