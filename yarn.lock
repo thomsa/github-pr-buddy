@@ -484,6 +484,16 @@
   resolved "https://registry.npmjs.org/@heroui/dom-animation/-/dom-animation-2.1.6.tgz"
   integrity sha512-l4xh+y02lmoJVdLR0cjpsa7LjLIvVQCX+w+S2KW6tOoPKmHlyW/8r7h6SqPB4Ua1NZGmRHtlYmw+mw47yqyTjw==
 
+"@heroui/drawer@^2.2.14":
+  version "2.2.14"
+  resolved "https://registry.npmjs.org/@heroui/drawer/-/drawer-2.2.14.tgz"
+  integrity sha512-QH9ot/lwmLGTRpuB3DnfxlmJdBfjfShJzjLym2KGt8eTc0MbrWFse6DZQ7VWw+BB2Co1cIQmjvVR3YNjbzSlAw==
+  dependencies:
+    "@heroui/framer-utils" "2.1.13"
+    "@heroui/modal" "2.2.14"
+    "@heroui/react-utils" "2.1.8"
+    "@heroui/shared-utils" "2.1.7"
+
 "@heroui/form@2.1.16":
   version "2.1.16"
   resolved "https://registry.npmjs.org/@heroui/form/-/form-2.1.16.tgz"
@@ -568,6 +578,28 @@
     "@react-types/menu" "3.9.15"
     "@react-types/shared" "3.28.0"
     "@tanstack/react-virtual" "3.11.3"
+
+"@heroui/modal@^2.2.14", "@heroui/modal@2.2.14":
+  version "2.2.14"
+  resolved "https://registry.npmjs.org/@heroui/modal/-/modal-2.2.14.tgz"
+  integrity sha512-0IhtFICTuYta/7PTcbzm/3y2jJmBIw+/xvkMUoTTjfXzW9bepMoGuZhfalJuaexqXm1mS+wxrn8/4w3NH5i8hA==
+  dependencies:
+    "@heroui/dom-animation" "2.1.6"
+    "@heroui/framer-utils" "2.1.13"
+    "@heroui/react-utils" "2.1.8"
+    "@heroui/shared-icons" "2.1.6"
+    "@heroui/shared-utils" "2.1.7"
+    "@heroui/use-aria-button" "2.2.11"
+    "@heroui/use-aria-modal-overlay" "2.2.10"
+    "@heroui/use-disclosure" "2.2.9"
+    "@heroui/use-draggable" "2.1.9"
+    "@react-aria/dialog" "3.5.23"
+    "@react-aria/focus" "3.20.1"
+    "@react-aria/interactions" "3.24.1"
+    "@react-aria/overlays" "3.26.1"
+    "@react-aria/utils" "3.28.1"
+    "@react-stately/overlays" "3.6.14"
+    "@react-types/overlays" "3.8.13"
 
 "@heroui/navbar@2.2.15":
   version "2.2.15"
@@ -830,6 +862,16 @@
     "@react-types/link" "3.5.11"
     "@react-types/shared" "3.28.0"
 
+"@heroui/use-aria-modal-overlay@2.2.10":
+  version "2.2.10"
+  resolved "https://registry.npmjs.org/@heroui/use-aria-modal-overlay/-/use-aria-modal-overlay-2.2.10.tgz"
+  integrity sha512-X2HJV1A+Aptbbloc3JyATBUp5u4wcKdfqU8+ovpXGvyFcgK01fUeQJ9DIECnTLOl1ueyEciuO4s7TxrcqVTsNQ==
+  dependencies:
+    "@react-aria/overlays" "3.26.1"
+    "@react-aria/utils" "3.28.1"
+    "@react-stately/overlays" "3.6.14"
+    "@react-types/shared" "3.28.0"
+
 "@heroui/use-aria-multiselect@2.4.10":
   version "2.4.10"
   resolved "https://registry.npmjs.org/@heroui/use-aria-multiselect/-/use-aria-multiselect-2.4.10.tgz"
@@ -850,6 +892,13 @@
     "@react-types/select" "3.9.10"
     "@react-types/shared" "3.28.0"
 
+"@heroui/use-callback-ref@2.1.6":
+  version "2.1.6"
+  resolved "https://registry.npmjs.org/@heroui/use-callback-ref/-/use-callback-ref-2.1.6.tgz"
+  integrity sha512-icFp4WBWTZhypBcyu+5kir7nZLtvtQq7DDvGwkTtxsGnFHgGDc6sXXcOU6AcCdoGefmsiVp5c3D3lZ2pMlGHmA==
+  dependencies:
+    "@heroui/use-safe-layout-effect" "2.1.6"
+
 "@heroui/use-clipboard@2.1.7":
   version "2.1.7"
   resolved "https://registry.npmjs.org/@heroui/use-clipboard/-/use-clipboard-2.1.7.tgz"
@@ -861,6 +910,22 @@
   integrity sha512-PDomGTM66LAL3oEJakJ8cJ5tgGBW/X71B0zrbS41Z9T/unOVPqnLkTCK4/6+2KppmHoZxE7VeG6OFeDLp1lBZw==
   dependencies:
     "@heroui/shared-utils" "2.1.7"
+
+"@heroui/use-disclosure@2.2.9":
+  version "2.2.9"
+  resolved "https://registry.npmjs.org/@heroui/use-disclosure/-/use-disclosure-2.2.9.tgz"
+  integrity sha512-3+zuhmGN3qj7dUCZ8ueTwIMo+Bu3leJgPtSdpGHouARTq7eWMMUlvthU1XuECpGbaGmIMO4hZfoCnmMiZiZunQ==
+  dependencies:
+    "@heroui/use-callback-ref" "2.1.6"
+    "@react-aria/utils" "3.28.1"
+    "@react-stately/utils" "3.10.5"
+
+"@heroui/use-draggable@2.1.9":
+  version "2.1.9"
+  resolved "https://registry.npmjs.org/@heroui/use-draggable/-/use-draggable-2.1.9.tgz"
+  integrity sha512-mpsE2sR5atBwixRFzEshDsgqqT3bwsctABNZYK/1bKwjMRCpar+3ebuGQL7jzaKcvtgbLVXyclYZkacPd/1l2w==
+  dependencies:
+    "@react-aria/interactions" "3.24.1"
 
 "@heroui/use-is-mobile@2.2.7":
   version "2.2.7"
