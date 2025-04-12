@@ -15,11 +15,11 @@ export default function DefaultLayout({
         {children}
       </main>
       <footer className="w-full flex items-center justify-center py-3 flex-col">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-center">
           GitHub PR Buddy is an open-source project. You can run it on your own
           environment.
         </p>
-        <p className="text-xs text-gray-600">
+        <p className="text-xs">
           <time dateTime="2025">{yearRange}</time>
         </p>
       </footer>

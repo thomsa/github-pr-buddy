@@ -20,8 +20,8 @@ export default function IndexPage() {
           <span className={title()}>GitHub </span>
           <span className={title({ color: "violet" })}>PR Buddy</span>
           <p className={subtitle({ class: "mt-4" })}>
-            The ultimate dashboard to monitor, filter, and manage your GitHub
-            pull requests.
+            The ultimate <strong>dashboard</strong> to monitor your GitHub pull
+            requests.
           </p>
         </div>
 
