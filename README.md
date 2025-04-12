@@ -1,12 +1,22 @@
-# Next.js & HeroUI Template
+![GitHub PR Buddy](https://github-pr-buddy.vercel.app/og-image.png)
 
-This is a template for creating applications using Next.js 14 (pages directory) and HeroUI (v2).
+# GitHub PR Buddy
 
-[Try it on CodeSandbox](https://githubbox.com/heroui-inc/next-pages-template)
+GitHub PR Buddy is an open source dashboard for monitoring GitHub pull requests and creating custom dashboards. Easily deployable on your own server, it gives you actionable insights into your repository's PRs—making code review and project management more efficient.
 
-> Note: Since Next.js 14, the pages router is recommend migrating to the [new App Router](https://nextjs.org/docs/app) to leverage React's latest features
->
-> Read more: [Pages Router](https://nextjs.org/docs/pages)
+> **Public Repository**  
+> Download, modify, and run GitHub PR Buddy on your own server. Follow the production or local development instructions below to get started.
+
+---
+
+## Features
+
+- **Real-Time Monitoring:** Keep track of pull requests and their statuses in real time.
+- **Custom Dashboards:** Create personalized dashboards to visualize PR metrics.
+- **Easy Deployment:** Run GitHub PR Buddy on your own server using simple production commands.
+- **Fully Open Source:** Modify, extend, and contribute to the project as needed.
+
+---
 
 ## Technologies Used
 
@@ -18,38 +28,83 @@ This is a template for creating applications using Next.js 14 (pages directory) 
 - [Framer Motion](https://www.framer.com/motion)
 - [next-themes](https://github.com/pacocoursey/next-themes)
 
-## How to Use
+---
 
-To create a new project based on this template using `create-next-app`, run the following command:
+## Getting Started
 
-```bash
-npx create-next-app -e https://github.com/heroui-inc/next-pages-template
-```
+### Production Deployment
 
-### Install dependencies
+For a production environment, we recommend using **yarn** and **pm2**. Follow these steps:
 
-You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
+1. **Install dependencies:**
 
-```bash
-npm install
-```
+   ```bash
+   yarn install
+   ```
 
-### Run the development server
+2. **Build the project:**
 
-```bash
-npm run dev
-```
+   ```bash
+   yarn build
+   ```
 
-### Setup pnpm (optional)
+3. **Run the service with pm2:**
 
-If you are using `pnpm`, you need to add the following code to your `.npmrc` file:
+   ```bash
+   pm2 start yarn --name "github-pr-buddy" -- run start
+   ```
 
-```bash
-public-hoist-pattern[]=*@heroui/*
-```
+   This command starts your application in production mode using pm2 as the process manager.
 
-After modifying the `.npmrc` file, you need to run `pnpm install` again to ensure that the dependencies are installed correctly.
+---
+
+### Local Development
+
+For local development, simply modify the code and follow Next.js guidelines:
+
+1. **Install dependencies:**
+
+   You can use your preferred package manager; for example, using npm:
+
+   ```bash
+   npm install
+   ```
+
+   Or with yarn:
+
+   ```bash
+   yarn install
+   ```
+
+2. **Run the development server:**
+
+   ```bash
+   npm run dev
+   ```
+
+   Or, using yarn:
+
+   ```bash
+   yarn dev
+   ```
+
+3. Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
+
+---
+
+## Contributing
+
+Contributions, issues, and feature requests are welcome!  
+Feel free to check the [issues page](https://github.com/thomsa/github-pr-buddy/issues) if you want to contribute.
+
+---
 
 ## License
 
-Licensed under the [MIT license](https://github.com/heroui-inc/next-pages-template/blob/main/LICENSE).
+This project is licensed under the [MIT License](https://github.com/thomsa/github-pr-buddy/blob/main/LICENSE).
+
+---
+
+## Acknowledgments
+
+- A huge thanks to the teams behind Next.js, HeroUI, and the entire open source community.
