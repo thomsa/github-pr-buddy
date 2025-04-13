@@ -41,6 +41,7 @@ import MetricsCard from "../components/MetricsCard";
 
 import { SmallPrTile } from "@/components/SmallPRTIle";
 import { fetcher } from "@/utils/fetcher";
+import { formatDuration } from "@/utils/formatDuration";
 
 export type PRReturnType = {
   number: number;
@@ -125,7 +126,7 @@ const Dashboard: React.FC = () => {
   const { data, error, mutate, isValidating, isLoading } = useSWR<APIResponse>(
     router.isReady && apiUrl.current ? [apiUrl.current] : null,
     (url) => fetcher(url as unknown as string, ghToken),
-    { revalidateOnFocus: false },
+    { revalidateOnFocus: false }
   );
 
   const { start, complete } = useLoadingBar({ color: "blue", height: 2 });
@@ -201,7 +202,7 @@ const Dashboard: React.FC = () => {
         },
       },
       undefined,
-      { shallow: true },
+      { shallow: true }
     );
     onCloseDrawer();
     mutate();
@@ -377,13 +378,7 @@ const Dashboard: React.FC = () => {
                 <BarChart data={prepareChartData("timeToFirstReview")}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
-                  <YAxis
-                    label={{
-                      value: "Seconds",
-                      angle: -90,
-                      position: "insideLeft",
-                    }}
-                  />
+                  <YAxis tickFormatter={(value) => formatDuration(value)} />
                   <Tooltip
                     content={<CustomTooltip />}
                     trigger="click"
@@ -403,13 +398,7 @@ const Dashboard: React.FC = () => {
                 <BarChart data={prepareChartData("timeToFirstApproval")}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
-                  <YAxis
-                    label={{
-                      value: "Seconds",
-                      angle: -90,
-                      position: "insideLeft",
-                    }}
-                  />
+                  <YAxis tickFormatter={(value) => formatDuration(value)} />
                   <Tooltip
                     content={<CustomTooltip />}
                     trigger="click"
@@ -429,13 +418,7 @@ const Dashboard: React.FC = () => {
                 <BarChart data={prepareChartData("timeToFirstCodeUpdate")}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
-                  <YAxis
-                    label={{
-                      value: "Seconds",
-                      angle: -90,
-                      position: "insideLeft",
-                    }}
-                  />
+                  <YAxis tickFormatter={(value) => formatDuration(value)} />
                   <Tooltip
                     content={<CustomTooltip />}
                     trigger="click"
@@ -455,13 +438,7 @@ const Dashboard: React.FC = () => {
                 <BarChart data={prepareChartData("totalTimeToClose")}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
-                  <YAxis
-                    label={{
-                      value: "Seconds",
-                      angle: -90,
-                      position: "insideLeft",
-                    }}
-                  />
+                  <YAxis tickFormatter={(value) => formatDuration(value)} />
                   <Tooltip
                     content={<CustomTooltip />}
                     trigger="click"
