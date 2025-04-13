@@ -87,7 +87,7 @@ async function getPRDetails(
   const issueComments = await commentsResp.json();
 
   if (reviews.message && reviews.message.includes("API rate limit exceeded")) {
-    res.status(403).json({ error: "Rate Limit Reached" });
+    res.status(403).json({ error: reviews.message });
 
     return null;
   }

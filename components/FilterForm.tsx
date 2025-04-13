@@ -5,6 +5,18 @@ import { Select, SelectItem } from "@heroui/select";
 import { Input } from "@heroui/input";
 import { NumberInput } from "@heroui/number-input";
 import { Button } from "@heroui/button";
+import useSWR from "swr";
+
+import { fetcher } from "@/utils/fetcher";
+
+type GitHubRepo = {
+  id: number;
+  name: string;
+  description: string | null;
+  html_url: string;
+};
+
+type Data = { repos: Record<string, GitHubRepo[]> } | { error: string };
 
 export type FilterFormValues = {
   dates: { start: any; end: any };
@@ -41,6 +53,13 @@ export const FilterForm: React.FC<FilterFormProps> = ({
   // useWatch retrieves the current value of the repo field from the form
   const repoValue = useWatch({ control, name: "repo" });
 
+  const { data, error, mutate, isValidating, isLoading } = useSWR<Data>(
+    "/api/my-repos",
+    (url: string) => fetcher(url as unknown as string, ghToken || "")
+  );
+
+  console.log(data);
+
   return (
     <form
       autoComplete="off"
@@ -50,21 +69,21 @@ export const FilterForm: React.FC<FilterFormProps> = ({
       <Controller
         control={control}
         name="repo"
-        rules={{ required: "Repository is required" }}
         render={({ field, fieldState: { error } }) => (
           <>
             <Input
+              isRequired
+              errorMessage={error ? error.message : undefined}
               label="Repository"
               placeholder="owner/repo"
               value={field.value}
-              isRequired
               onValueChange={(value) => field.onChange(value)}
-              errorMessage={error ? error.message : undefined}
             />
           </>
         )}
+        rules={{ required: "Repository is required" }}
       />
-      <h3 className="text-lg font-bold">Filter Controls</h3>
+      <h3 className="text-lg font-bold">Filters</h3>
       <Controller
         control={control}
         name="dates"
@@ -116,8 +135,8 @@ export const FilterForm: React.FC<FilterFormProps> = ({
       />
 
       <Button
-        type="submit"
         isDisabled={!ghToken || !repoValue || !repoValue.trim()}
+        type="submit"
       >
         Apply Filters
       </Button>

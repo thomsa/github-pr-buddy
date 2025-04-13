@@ -99,7 +99,7 @@ export default function IndexPage() {
               })}
               href="/pr-browser"
             >
-              Create your Dashboard
+              Create Your Dashboard
             </Link>
             <Link
               className={buttonStyles({
@@ -109,7 +109,7 @@ export default function IndexPage() {
               })}
               href="/dashboard"
             >
-              Check out your Metrics
+              Explore Your Time Metrics
             </Link>
           </div>
           <Link

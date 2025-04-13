@@ -9,6 +9,7 @@ import {
   TimelineTime,
   TimelineTitle,
 } from "flowbite-react";
+
 import { formatDuration } from "@/utils/formatDuration";
 
 // Type definitions matching your PR data

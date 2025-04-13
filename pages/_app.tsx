@@ -6,8 +6,10 @@ import "@/styles/globals.css";
 import { LoadingBarContainer } from "react-top-loading-bar";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { SWRConfig } from "swr";
 
 import { fontSans, fontMono } from "@/config/fonts";
+import { fetcher } from "@/utils/fetcher";
 
 const theme = createTheme({
   colorSchemes: {
@@ -19,15 +21,21 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   return (
-    <HeroUIProvider navigate={router.push}>
-      <NextThemesProvider>
-        <ThemeProvider theme={theme}>
-          <LoadingBarContainer>
-            <Component {...pageProps} />
-          </LoadingBarContainer>
-        </ThemeProvider>
-      </NextThemesProvider>
-    </HeroUIProvider>
+    <SWRConfig
+      value={{
+        fetcher: fetcher,
+      }}
+    >
+      <HeroUIProvider navigate={router.push}>
+        <NextThemesProvider>
+          <ThemeProvider theme={theme}>
+            <LoadingBarContainer>
+              <Component {...pageProps} />
+            </LoadingBarContainer>
+          </ThemeProvider>
+        </NextThemesProvider>
+      </HeroUIProvider>
+    </SWRConfig>
   );
 }
 

@@ -9,6 +9,7 @@ import {
   TimelineTime,
   TimelineTitle,
 } from "flowbite-react";
+
 import { formatDuration } from "@/utils/formatDuration";
 
 // Type definitions matching your PR data
@@ -94,7 +95,6 @@ export const SmallPrTile: React.FC<PRTileProps> = ({ pr }) => {
             </a>
           </h2>
           <Chip
-            size="sm"
             color={
               pr.state === "open"
                 ? "warning"
@@ -102,6 +102,7 @@ export const SmallPrTile: React.FC<PRTileProps> = ({ pr }) => {
                   ? "primary"
                   : "danger"
             }
+            size="sm"
           >
             {pr.state}
           </Chip>

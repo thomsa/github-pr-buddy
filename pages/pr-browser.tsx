@@ -9,7 +9,6 @@ import {
   useDisclosure,
 } from "@heroui/modal";
 import React, { useState, useEffect, useRef } from "react";
-import { PiCaretRightThin } from "react-icons/pi";
 import { useLoadingBar } from "react-top-loading-bar";
 import { Masonry } from "@mui/lab";
 import useSWR from "swr";
@@ -22,11 +21,14 @@ import {
   DrawerContent,
   DrawerHeader,
 } from "@heroui/drawer";
+import { Spinner } from "flowbite-react";
+import { Alert } from "@heroui/alert";
+import { IoSettingsOutline } from "react-icons/io5";
 
 import { FilterForm, FilterFormValues } from "../components/FilterForm";
 import { PRTile, PRReturn } from "../components/PRTile";
-import { Spinner } from "flowbite-react";
-import { Alert } from "@heroui/alert";
+
+import { fetcher } from "@/utils/fetcher";
 
 type PRMetric = {
   timeToFirstReview: number | null;
@@ -62,15 +64,6 @@ type PRResponse = {
   pullRequests: PRReturnType[];
   authors: string[];
 };
-
-const fetcher = (url: string, githubToken: string) =>
-  fetch(url, {
-    headers: {
-      ...(githubToken
-        ? { Authorization: `token ${githubToken.replace('"', "")}` }
-        : {}),
-    },
-  }).then((res) => res.json());
 
 const PRBrowser: React.FC = () => {
   const router = useRouter();
@@ -114,7 +107,7 @@ const PRBrowser: React.FC = () => {
   const { data, error, mutate, isValidating, isLoading } = useSWR<PRResponse>(
     router.isReady && apiUrl.current ? [apiUrl.current] : null,
     (url) => fetcher(url as unknown as string, ghToken || ""),
-    { refreshInterval }
+    { refreshInterval },
   );
 
   useEffect(() => {
@@ -199,7 +192,7 @@ const PRBrowser: React.FC = () => {
         },
       },
       undefined,
-      { shallow: true }
+      { shallow: true },
     );
     onCloseDrawer();
     mutate();
@@ -209,11 +202,11 @@ const PRBrowser: React.FC = () => {
     <>
       <Button
         isIconOnly
-        className="fixed z-10 top-1/2 left-0 transform -translate-y-1/2"
-        variant="light"
+        className="fixed z-10 bottom-0 left-0"
+        variant="flat"
         onClick={() => onOpenDrawer()}
       >
-        <PiCaretRightThin className="h-6 w-6" />
+        <IoSettingsOutline className="h-5 w-5" />
       </Button>
       <Drawer isOpen={isDrawerOpen} placement="left" onClose={onCloseDrawer}>
         <DrawerContent>
@@ -224,19 +217,19 @@ const PRBrowser: React.FC = () => {
               <h3 className="text-lg font-bold mb-2">Github Settings</h3>
               <Input
                 data-1p-ignore
+                isRequired
                 autoComplete="off"
                 description="The GH Token is stored only in your browser's local storage. We do not save it on our servers."
                 label="GitHub Token"
                 placeholder="Enter GitHub token"
-                isRequired
                 type="password"
                 value={ghToken}
                 onValueChange={(value) => setGhToken(value)}
               />
             </div>
             <FilterForm
-              ghToken={ghToken}
               control={control}
+              ghToken={ghToken}
               handleSubmit={handleSubmit}
               register={register}
               onSubmit={applyFilters}
@@ -274,19 +267,19 @@ const PRBrowser: React.FC = () => {
                   <h3 className="text-lg font-bold mb-2">Github Settings</h3>
                   <Input
                     data-1p-ignore
+                    isRequired
                     autoComplete="off"
                     description="The GH Token is stored only in your browser's local storage. We do not save it on our servers."
                     label="GitHub Token"
                     placeholder="Enter GitHub token"
-                    isRequired
                     type="password"
                     value={ghToken}
                     onValueChange={(value) => setGhToken(value)}
                   />
                 </div>
                 <FilterForm
-                  ghToken={ghToken}
                   control={control}
+                  ghToken={ghToken}
                   handleSubmit={handleSubmit}
                   register={register}
                   onSubmit={(data) => {
