@@ -125,11 +125,7 @@ export default function IndexPage() {
 
       {/* Mock PR Tiles Section */}
 
-      <Masonry
-        sequential
-        className="min-h-screen"
-        columns={{ xs: 1, md: 2, lg: 3 }}
-      >
+      <Masonry sequential columns={{ xs: 1, md: 2, lg: 3 }}>
         {mockPRs.map((pr, index) => (
           <PRTile key={pr.number} index={index} pr={pr} />
         ))}
