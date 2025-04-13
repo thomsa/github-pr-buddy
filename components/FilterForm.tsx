@@ -1,7 +1,7 @@
 import React from "react";
 import { useWatch, Controller } from "react-hook-form";
 import { DateRangePicker } from "@heroui/date-picker";
-import { Select, SelectItem } from "@heroui/select";
+import { Select, SelectItem, SelectSection } from "@heroui/select";
 import { Input } from "@heroui/input";
 import { NumberInput } from "@heroui/number-input";
 import { Button } from "@heroui/button";
@@ -16,7 +16,7 @@ type GitHubRepo = {
   html_url: string;
 };
 
-type Data = { repos: Record<string, GitHubRepo[]> } | { error: string };
+type Data = { repos: Record<string, GitHubRepo[]> };
 
 export type FilterFormValues = {
   dates: { start: any; end: any };
@@ -31,7 +31,7 @@ interface FilterFormProps {
   control: any;
   register: any;
   handleSubmit: (
-    fn: (data: FilterFormValues) => void
+    fn: (data: FilterFormValues) => void,
   ) => (e?: React.BaseSyntheticEvent) => Promise<void>;
   ghToken: string;
 }
@@ -53,12 +53,10 @@ export const FilterForm: React.FC<FilterFormProps> = ({
   // useWatch retrieves the current value of the repo field from the form
   const repoValue = useWatch({ control, name: "repo" });
 
-  const { data, error, mutate, isValidating, isLoading } = useSWR<Data>(
-    "/api/my-repos",
-    (url: string) => fetcher(url as unknown as string, ghToken || "")
+  const { data, isLoading } = useSWR<Data>(
+    ghToken ? "/api/my-repos" : null,
+    (url: string) => fetcher(url, ghToken || ""),
   );
-
-  console.log(data);
 
   return (
     <form
@@ -66,23 +64,56 @@ export const FilterForm: React.FC<FilterFormProps> = ({
       className="flex flex-col gap-4"
       onSubmit={handleSubmit(onSubmit)}
     >
+      {/* Repository select field set up with grouped options */}
+
+      <Controller
+        control={control}
+        name="repo"
+        render={({ field }) => (
+          <Select
+            description="You can either select from the dropdown or type manually to the input below."
+            isLoading={isLoading}
+            label="Repository"
+            labelPlacement="outside"
+            placeholder="Select a repository"
+            selectedKeys={[field.value]}
+            onChange={(event) => field.onChange(event.target.value)}
+          >
+            {data
+              ? Object.entries(data.repos).map(([groupName, repos]) => (
+                  <SelectSection key={groupName} showDivider title={groupName}>
+                    {repos?.map((repo) => (
+                      <SelectItem key={repo.name} textValue={repo.name}>
+                        <p>{repo.name}</p>
+                        <p className="text-tiny text-slate-400">
+                          {repo.description}
+                        </p>
+                      </SelectItem>
+                    ))}
+                  </SelectSection>
+                ))
+              : null}
+          </Select>
+        )}
+        rules={{ required: "Repository is required" }}
+      />
+
       <Controller
         control={control}
         name="repo"
         render={({ field, fieldState: { error } }) => (
-          <>
-            <Input
-              isRequired
-              errorMessage={error ? error.message : undefined}
-              label="Repository"
-              placeholder="owner/repo"
-              value={field.value}
-              onValueChange={(value) => field.onChange(value)}
-            />
-          </>
+          <Input
+            isRequired
+            errorMessage={error ? error.message : undefined}
+            label="Repository"
+            placeholder="owner/repo"
+            value={field.value}
+            onValueChange={(value) => field.onChange(value)}
+          />
         )}
         rules={{ required: "Repository is required" }}
       />
+
       <h3 className="text-lg font-bold">Filters</h3>
       <Controller
         control={control}

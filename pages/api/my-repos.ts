@@ -3,18 +3,77 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 type GitHubRepo = {
   id: number;
-  name: string;
+  name: string; // will hold the repository's full name from the API
   description: string | null;
   html_url: string;
 };
 
 type Data = { repos: Record<string, GitHubRepo[]> } | { error: string };
 
+/**
+ * Parses a Link header into an object mapping relation types (e.g., "next") to URLs.
+ */
+function parseLinkHeader(header: string): { [key: string]: string } {
+  const links: { [key: string]: string } = {};
+  const parts = header.split(",");
+
+  parts.forEach((part) => {
+    const match = part.match(/<([^>]+)>;\s*rel="([^"]+)"/);
+
+    if (match) {
+      const url = match[1];
+      const rel = match[2];
+
+      links[rel] = url;
+    }
+  });
+
+  return links;
+}
+
+/**
+ * Fetches all pages of GitHub API results for the provided URL.
+ */
+async function fetchAllPages(url: string, token: string): Promise<any[]> {
+  let results: any[] = [];
+  let nextUrl: string | null = url;
+
+  while (nextUrl) {
+    const response = await fetch(nextUrl, {
+      headers: {
+        Accept: "application/vnd.github+json",
+        Authorization: `token ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+
+      throw new Error(`GitHub API error: ${errorText}`);
+    }
+    const data = await response.json();
+
+    results = results.concat(data);
+
+    const linkHeader = response.headers.get("Link");
+
+    if (linkHeader) {
+      const links = parseLinkHeader(linkHeader);
+
+      nextUrl = links.next || null;
+    } else {
+      nextUrl = null;
+    }
+  }
+
+  return results;
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  // Extract the token from the request header.
+  // Extract the GitHub token from the request header.
   const headerToken = req.headers.authorization || "";
   const token = headerToken.replace(/^token\s+/i, "");
 
@@ -25,7 +84,7 @@ export default async function handler(
   }
 
   try {
-    // 1. Get the authenticated user's details.
+    // 1. Retrieve details for the authenticated user.
     const userResp = await fetch("https://api.github.com/user", {
       headers: {
         Accept: "application/vnd.github+json",
@@ -44,29 +103,18 @@ export default async function handler(
     // Prepare the grouped results object.
     const groupedRepos: Record<string, GitHubRepo[]> = {};
 
-    // 2. Get the user's personal (own) projects.
-    const userReposUrl = `https://api.github.com/users/${myLogin}/repos`;
-    const userReposResp = await fetch(userReposUrl, {
-      headers: {
-        Accept: "application/vnd.github.inertia-preview+json",
-        Authorization: `token ${token}`,
-      },
-    });
+    // 2. Get the user's personal repositories (their "own" repos) with pagination.
+    const userReposUrl = `https://api.github.com/users/${myLogin}/repos?per_page=100&sort=full_name&direction=asc`;
+    const userRepos = await fetchAllPages(userReposUrl, token);
 
-    if (userReposResp.ok) {
-      const userProjects = await userReposResp.json();
-
-      groupedRepos["own"] = userProjects.map(
-        (repo: any): GitHubRepo => ({
-          id: repo.id,
-          name: repo.name,
-          description: repo.description,
-          html_url: repo.html_url,
-        })
-      );
-    } else {
-      groupedRepos["own"] = [];
-    }
+    groupedRepos["own"] = userRepos.map(
+      (repo: any): GitHubRepo => ({
+        id: repo.id,
+        name: repo.full_name,
+        description: repo.description,
+        html_url: repo.html_url,
+      })
+    );
 
     // 3. Get all organizations the user belongs to.
     const orgsResp = await fetch(
@@ -86,39 +134,26 @@ export default async function handler(
     }
     const orgs = await orgsResp.json();
 
-    // For each organization, get the organization-level projects.
+    // 4. For each organization, fetch all repositories with pagination.
     await Promise.all(
       orgs.map(async (org: any) => {
-        const orgReposUrl = `https://api.github.com/orgs/${org.login}/repos`;
-        const orgReposResp = await fetch(orgReposUrl, {
-          headers: {
-            Accept: "application/vnd.github.inertia-preview+json",
-            Authorization: `token ${token}`,
-          },
-        });
+        const orgReposUrl = `https://api.github.com/orgs/${org.login}/repos?per_page=100&sort=full_name&direction=asc`;
+        const orgRepos = await fetchAllPages(orgReposUrl, token);
 
-        console.log(orgReposResp);
-
-        if (orgReposResp.ok) {
-          const orgRepos = await orgReposResp.json();
-
-          groupedRepos[org.login] = orgRepos.map(
-            (repo: any): GitHubRepo => ({
-              id: repo.id,
-              name: repo.full_name,
-              description: repo.description,
-              html_url: repo.html_url,
-            })
-          );
-        } else {
-          groupedRepos[org.login] = [];
-        }
+        groupedRepos[org.login] = orgRepos.map(
+          (repo: any): GitHubRepo => ({
+            id: repo.id,
+            name: repo.full_name,
+            description: repo.description,
+            html_url: repo.html_url,
+          })
+        );
       })
     );
 
     res.status(200).json({ repos: groupedRepos });
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: err.message || "Internal server error" });
   }
 }

@@ -125,7 +125,7 @@ const Dashboard: React.FC = () => {
   const { data, error, mutate, isValidating, isLoading } = useSWR<APIResponse>(
     router.isReady && apiUrl.current ? [apiUrl.current] : null,
     (url) => fetcher(url as unknown as string, ghToken),
-    { revalidateOnFocus: false }
+    { revalidateOnFocus: false },
   );
 
   const { start, complete } = useLoadingBar({ color: "blue", height: 2 });
@@ -201,7 +201,7 @@ const Dashboard: React.FC = () => {
         },
       },
       undefined,
-      { shallow: true }
+      { shallow: true },
     );
     onCloseDrawer();
     mutate();
