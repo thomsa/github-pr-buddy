@@ -326,6 +326,18 @@
     "@react-types/accordion" "3.0.0-alpha.26"
     "@react-types/shared" "3.28.0"
 
+"@heroui/alert@^2.2.17":
+  version "2.2.17"
+  resolved "https://registry.npmjs.org/@heroui/alert/-/alert-2.2.17.tgz"
+  integrity sha512-y0lANoJ3eNp5yH02bwV8ejuAhw77/hEq5hViItDTCa6DoYlEwDiX0y+LLw+Dmbl8V2ZcotAnpd63iifsE64Edw==
+  dependencies:
+    "@heroui/button" "2.2.17"
+    "@heroui/react-utils" "2.1.8"
+    "@heroui/shared-icons" "2.1.6"
+    "@heroui/shared-utils" "2.1.7"
+    "@react-aria/utils" "3.28.1"
+    "@react-stately/utils" "3.10.5"
+
 "@heroui/aria-utils@2.2.14":
   version "2.2.14"
   resolved "https://registry.npmjs.org/@heroui/aria-utils/-/aria-utils-2.2.14.tgz"

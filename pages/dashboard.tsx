@@ -40,6 +40,7 @@ import MetricsCard from "../components/MetricsCard";
 import { SmallPrTile } from "@/components/SmallPRTIle";
 import { formatDuration } from "@/utils/formatDuration";
 import { Spinner } from "flowbite-react";
+import { Alert } from "@heroui/alert";
 
 export type PRReturnType = {
   number: number;
@@ -344,10 +345,13 @@ const Dashboard: React.FC = () => {
       )}
 
       {(error || data?.error) && (
-        <pre className="max-w-full whitespace-pre-wrap">
-          {error && JSON.stringify(error, null, 4)}
-          {data?.error && JSON.stringify(data?.error, null, 4)}
-        </pre>
+        <Alert
+          color="danger"
+          title={
+            (error && JSON.stringify(error, null, 4)) ||
+            (data?.error && JSON.stringify(data?.error, null, 4))
+          }
+        />
       )}
 
       {!data && (
