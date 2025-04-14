@@ -75,7 +75,7 @@ async function fetchAllPages(url: string, token: string): Promise<any[]> {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<Data>,
 ) {
   // Extract the GitHub token from the request header.
   const headerToken = req.headers.authorization || "";
@@ -117,7 +117,7 @@ export default async function handler(
         name: repo.full_name,
         description: repo.description,
         html_url: repo.html_url,
-      })
+      }),
     );
 
     // 3. Get all organizations the user belongs to.
@@ -128,7 +128,7 @@ export default async function handler(
           Accept: "application/vnd.github+json",
           Authorization: `token ${token}`,
         },
-      }
+      },
     );
 
     if (!orgsResp.ok) {
@@ -150,9 +150,9 @@ export default async function handler(
             name: repo.full_name,
             description: repo.description,
             html_url: repo.html_url,
-          })
+          }),
         );
-      })
+      }),
     );
 
     res.status(200).json({ repos: groupedRepos });

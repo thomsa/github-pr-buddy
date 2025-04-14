@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useWatch, Controller } from "react-hook-form";
 import { DateRangePicker } from "@heroui/date-picker";
 import { Select, SelectItem, SelectSection } from "@heroui/select";
@@ -53,10 +53,15 @@ export const FilterForm: React.FC<FilterFormProps> = ({
   // useWatch retrieves the current value of the repo field from the form
   const repoValue = useWatch({ control, name: "repo" });
 
-  const { data, isLoading } = useSWR<Data>(
+  const { data, isLoading, mutate, isValidating } = useSWR<Data>(
     ghToken ? "/api/my-repos" : null,
     (url: string) => fetcher(url, ghToken || ""),
+    { revalidateOnFocus: false, errorRetryCount: 0 },
   );
+
+  useEffect(() => {
+    mutate();
+  }, [ghToken]);
 
   return (
     <form
@@ -72,7 +77,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
         render={({ field }) => (
           <Select
             description="You can either select from the dropdown or type manually to the input below."
-            isLoading={isLoading}
+            isLoading={isLoading || isValidating}
             label="Repository"
             labelPlacement="outside"
             placeholder="Select a repository"

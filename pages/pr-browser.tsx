@@ -255,6 +255,7 @@ const PRBrowser: React.FC = () => {
           isDismissable={false}
           isKeyboardDismissDisabled={true}
           isOpen={showModal}
+          scrollBehavior="inside"
         >
           <ModalContent>
             <ModalHeader className="flex flex-col gap-1">
