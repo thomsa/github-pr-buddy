@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { NextApiRequest, NextApiResponse } from "next";
 
+export const config = {
+  maxDuration: 30,
+};
+
 type GitHubRepo = {
   id: number;
   name: string; // will hold the repository's full name from the API
