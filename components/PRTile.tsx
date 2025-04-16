@@ -9,6 +9,7 @@ import {
   TimelineTime,
   TimelineTitle,
 } from "flowbite-react";
+import { Badge } from "@heroui/badge";
 
 import { formatDuration } from "@/utils/formatDuration";
 
@@ -54,7 +55,7 @@ const LiveTimer: React.FC<{ startTime: string }> = ({ startTime }) => {
     const updateElapsed = () => {
       const start = new Date(startTime).getTime();
       const now = Date.now();
-      
+
       setElapsed(Math.floor((now - start) / 1000));
     };
 
@@ -86,10 +87,9 @@ export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
   // Helper function to determine the next pending step
   const getNextStep = (pr: PRReturn): string | null => {
     if (pr.closedAt !== null) return null;
-    if (pr.metrics.timeToFirstReview === null) return "Waiting For: REVIEW";
-    if (pr.metrics.timeToFirstCodeUpdate === null)
-      return "Waiting For: CODE UPDATE";
-    if (pr.metrics.timeToFirstApproval === null) return "Waiting For: APPROVAL";
+    if (pr.metrics.timeToFirstReview === null) return "REVIEW";
+    if (pr.metrics.timeToFirstCodeUpdate === null) return "CODE UPDATE";
+    if (pr.metrics.timeToFirstApproval === null) return "APPROVAL";
 
     if (pr.closedAt === null) return "CAN BE MERGED";
 
@@ -104,9 +104,14 @@ export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
       shadow="lg"
     >
       <CardBody>
-        <div className="flex justify-between items-center">
-          <h2 className="text-large font-bold underline">
-            <a href={pr.url} rel="noopener noreferrer" target="_blank">
+        <div className="flex justify-between items-center gap-4">
+          <h2 className="text-large font-bold underline text-ellipsis">
+            <a
+              className="text-ellipsis"
+              href={pr.url}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
               {pr.title}
             </a>
           </h2>
@@ -196,14 +201,16 @@ export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
         {/* Render hero Chip for the next incomplete step, if any */}
         {nextStep && (
           <div className="flex justify-center my-4">
-            <Chip
-              className="animate-pulse px-6 py-3 font-bold text-xl"
-              size="lg"
-              color="default"
-              variant="solid"
-            >
-              {nextStep}
-            </Chip>
+            <Badge color="danger" content="NEXT" variant="shadow">
+              <Chip
+                className="px-6 py-6 font-bold text-xl"
+                color="default"
+                size="lg"
+                variant="solid"
+              >
+                {nextStep}
+              </Chip>
+            </Badge>
           </div>
         )}
 

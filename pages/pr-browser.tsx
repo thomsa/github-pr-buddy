@@ -24,6 +24,7 @@ import {
 import { Spinner } from "flowbite-react";
 import { Alert } from "@heroui/alert";
 import { IoSettingsOutline } from "react-icons/io5";
+import { NumberInput } from "@heroui/number-input";
 
 import { FilterForm, FilterFormValues } from "../components/FilterForm";
 import { PRTile, PRReturn } from "../components/PRTile";
@@ -100,6 +101,8 @@ const PRBrowser: React.FC = () => {
       setShowModal(true);
     }
   }, []);
+
+  const [viewColumns, setViewColumns] = useState<number>(3);
 
   const [page, setPage] = useState<number>(1);
   const apiUrl = useRef("");
@@ -234,6 +237,11 @@ const PRBrowser: React.FC = () => {
               register={register}
               onSubmit={applyFilters}
             />
+            <h3 className="text-lg font-bold">View Settings</h3>
+            <NumberInput
+              defaultValue={viewColumns}
+              onChange={(value) => setViewColumns(value as number)}
+            />
           </DrawerBody>
         </DrawerContent>
       </Drawer>
@@ -310,7 +318,7 @@ const PRBrowser: React.FC = () => {
       <Masonry
         sequential
         className="min-h-screen"
-        columns={{ xs: 1, md: 2, lg: 3 }}
+        columns={{ xs: 1, md: 2, lg: viewColumns }}
       >
         {(data?.pullRequests ?? []).map((pr: PRReturn, index: number) => (
           <PRTile key={pr.number} index={index} pr={pr} />
