@@ -31,7 +31,7 @@ interface FilterFormProps {
   control: any;
   register: any;
   handleSubmit: (
-    fn: (data: FilterFormValues) => void
+    fn: (data: FilterFormValues) => void,
   ) => (e?: React.BaseSyntheticEvent) => Promise<void>;
   ghToken: string;
 }
@@ -56,7 +56,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
   const { data, isLoading, mutate, isValidating } = useSWR<Data>(
     ghToken ? "/api/my-repos" : null,
     (url: string) => fetcher(url, ghToken || ""),
-    { revalidateOnFocus: false, errorRetryCount: 0 }
+    { revalidateOnFocus: false, errorRetryCount: 0 },
   );
 
   useEffect(() => {
@@ -171,6 +171,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
       />
 
       <Button
+        color="primary"
         isDisabled={!ghToken || !repoValue || !repoValue.trim()}
         type="submit"
       >

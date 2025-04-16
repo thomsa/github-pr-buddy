@@ -25,6 +25,7 @@ import { Spinner } from "flowbite-react";
 import { Alert } from "@heroui/alert";
 import { IoSettingsOutline } from "react-icons/io5";
 import { NumberInput } from "@heroui/number-input";
+import Link from "next/link";
 
 import { FilterForm, FilterFormValues } from "../components/FilterForm";
 import { PRTile, PRReturn } from "../components/PRTile";
@@ -216,6 +217,23 @@ const PRBrowser: React.FC = () => {
           <DrawerHeader>Dashboard Settings</DrawerHeader>
           <DrawerBody>
             {/* GitHub Settings Section */}
+            <div>
+              <p className="text-tiny mb-1">
+                You can check out the time metrics for your GitHub PRs based on
+                the filters you have set.
+              </p>
+              <Link
+                href={{
+                  pathname: "/dashboard", // your new path here
+                  query: router.query, // keeps the existing query parameters
+                }}
+                target="_blank"
+              >
+                <Button className="w-full" color="secondary" size="sm">
+                  VIEW TIME METRICS
+                </Button>
+              </Link>
+            </div>
             <div className="mb-6">
               <h3 className="text-lg font-bold mb-2">Github Settings</h3>
               <Input
@@ -240,6 +258,7 @@ const PRBrowser: React.FC = () => {
             <h3 className="text-lg font-bold">View Settings</h3>
             <NumberInput
               defaultValue={viewColumns}
+              label="Dashboard Columns on Desktop"
               onChange={(value) => setViewColumns(value as number)}
             />
           </DrawerBody>

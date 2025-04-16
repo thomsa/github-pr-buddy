@@ -35,6 +35,7 @@ import {
 import { Spinner } from "flowbite-react";
 import { Alert } from "@heroui/alert";
 import { IoSettingsOutline } from "react-icons/io5";
+import Link from "next/link";
 
 import { FilterForm, FilterFormValues } from "../components/FilterForm";
 import MetricsCard from "../components/MetricsCard";
@@ -222,6 +223,22 @@ const Dashboard: React.FC = () => {
         <DrawerContent>
           <DrawerHeader>Dashboard Settings</DrawerHeader>
           <DrawerBody>
+            <div>
+              <p className="text-tiny mb-1">
+                You can create a Dashboard for your filter results.
+              </p>
+              <Link
+                href={{
+                  pathname: "/pr-browser", // your new path here
+                  query: router.query, // keeps the existing query parameters
+                }}
+                target="_blank"
+              >
+                <Button className="w-full" color="default" size="sm">
+                  CREATE DASHBOARD
+                </Button>
+              </Link>
+            </div>
             <div>
               <h3 className="text-lg font-bold">GitHub Settings</h3>
               <Input
