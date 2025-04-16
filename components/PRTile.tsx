@@ -136,7 +136,7 @@ export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
             <TimelinePoint />
             <TimelineContent>
               <TimelineTime>
-                <Chip variant="bordered">Opened</Chip>
+                <Chip>Opened</Chip>
               </TimelineTime>
               <TimelineTitle className={`text-3xl ${getBgColor(pr)}`}>
                 {new Date(pr.createdAt).toLocaleString()}
@@ -148,9 +148,7 @@ export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
               <TimelinePoint />
               <TimelineContent>
                 <TimelineTime>
-                  <Chip color="primary" variant="bordered">
-                    First Review
-                  </Chip>
+                  <Chip color="primary">First Review</Chip>
                 </TimelineTime>
                 <TimelineTitle className={`text-3xl ${getBgColor(pr)}`}>
                   +{formatDuration(pr.metrics.timeToFirstReview)}
@@ -163,7 +161,7 @@ export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
               <TimelinePoint />
               <TimelineContent>
                 <TimelineTime>
-                  <Chip color="primary">First Code Update</Chip>
+                  <Chip color="secondary">First Code Update</Chip>
                 </TimelineTime>
                 <TimelineTitle className={`text-3xl ${getBgColor(pr)}`}>
                   +{formatDuration(pr.metrics.timeToFirstCodeUpdate)}
