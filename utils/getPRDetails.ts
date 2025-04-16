@@ -32,7 +32,10 @@ export async function getPRDetails(
   pr: any,
   token: string,
   res: any,
+  returnNullAsString: boolean
 ): Promise<PRReturn | null> {
+  const nullReturnValue = returnNullAsString ? "null" : null;
+
   const prUrl: string = pr.pull_request.url;
 
   logger.debug(`Fetching PR details from ${prUrl}`);
@@ -51,7 +54,7 @@ export async function getPRDetails(
     !prDetails.merged_at
   ) {
     logger.warn(
-      `PR ${pr.number} marked as merged but no merged_at date found.`,
+      `PR ${pr.number} marked as merged but no merged_at date found.`
     );
 
     return null;
@@ -112,13 +115,13 @@ export async function getPRDetails(
       author: c.user.login,
       createdAt: c.created_at,
       body: c.body,
-    }),
+    })
   );
   const timeline: PRTimelineItem[] = [
     ...reviewsFormatted,
     ...commentsFormatted,
   ].sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
 
   const createdAtDate = new Date(pr.created_at);
@@ -130,18 +133,18 @@ export async function getPRDetails(
       ? reviewsFormatted.reduce((prev, cur) =>
           new Date(cur.createdAt).getTime() < new Date(prev.createdAt).getTime()
             ? cur
-            : prev,
+            : prev
         )
       : null;
   const timeToFirstReview = firstReview
     ? (new Date(firstReview.createdAt).getTime() - createdAtDate.getTime()) /
       1000
-    : "null";
+    : nullReturnValue;
   const firstApproval = reviewsFormatted.find((r) => r.state === "APPROVED");
   const timeToFirstApproval = firstApproval
     ? (new Date(firstApproval.createdAt).getTime() - createdAtDate.getTime()) /
       1000
-    : "null";
+    : nullReturnValue;
 
   let timeToFirstCodeUpdate: number | null = null;
 
@@ -150,7 +153,7 @@ export async function getPRDetails(
     const commitAfterReview = (commits || []).find(
       (commit: any) =>
         new Date(commit.commit.author.date).getTime() >
-        firstReviewTime.getTime(),
+        firstReviewTime.getTime()
     );
 
     if (commitAfterReview) {
@@ -163,7 +166,7 @@ export async function getPRDetails(
 
   const totalTimeToClose = closedAtDate
     ? (closedAtDate.getTime() - createdAtDate.getTime()) / 1000
-    : "null";
+    : nullReturnValue;
 
   logger.info(`PR ${pr.number} details fetched successfully.`);
 

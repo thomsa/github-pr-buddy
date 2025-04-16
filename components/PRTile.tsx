@@ -54,7 +54,7 @@ const LiveTimer: React.FC<{ startTime: string }> = ({ startTime }) => {
     const updateElapsed = () => {
       const start = new Date(startTime).getTime();
       const now = Date.now();
-
+      
       setElapsed(Math.floor((now - start) / 1000));
     };
 
@@ -83,6 +83,21 @@ const getBgColor = (pr: PRReturn): string => {
 };
 
 export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
+  // Helper function to determine the next pending step
+  const getNextStep = (pr: PRReturn): string | null => {
+    if (pr.closedAt !== null) return null;
+    if (pr.metrics.timeToFirstReview === null) return "Waiting For: REVIEW";
+    if (pr.metrics.timeToFirstCodeUpdate === null)
+      return "Waiting For: CODE UPDATE";
+    if (pr.metrics.timeToFirstApproval === null) return "Waiting For: APPROVAL";
+
+    if (pr.closedAt === null) return "CAN BE MERGED";
+
+    return null;
+  };
+
+  const nextStep = getNextStep(pr);
+
   return (
     <Card
       className={`p-5 flex flex-col relative ${getBgColor(pr)}`}
@@ -177,7 +192,21 @@ export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
             </TimelineItem>
           )}
         </Timeline>
-        <div className="flex-1" />
+
+        {/* Render hero Chip for the next incomplete step, if any */}
+        {nextStep && (
+          <div className="flex justify-center my-4">
+            <Chip
+              className="animate-pulse px-6 py-3 font-bold text-xl"
+              size="lg"
+              color="default"
+              variant="solid"
+            >
+              {nextStep}
+            </Chip>
+          </div>
+        )}
+
         <div className="w-full flex flex-col items-center mt-4">
           <div className="flex items-center w-full">
             <span>#{index + 1}</span>

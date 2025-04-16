@@ -110,7 +110,7 @@ export default async function handler(
 
     logger.info(`Found ${prs.length} pull requests. Fetching detailed data...`);
     const detailedPRsArr = await Promise.all(
-      prs.map((pr) => getPRDetails(pr, token, res)),
+      prs.map((pr) => getPRDetails(pr, token, res, false)),
     );
     const detailedPRs = detailedPRsArr.filter(
       (pr): pr is PRReturn => pr !== null,
