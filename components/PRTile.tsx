@@ -87,11 +87,12 @@ export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
   // Helper function to determine the next pending step
   const getNextStep = (pr: PRReturn): string | null => {
     if (pr.closedAt !== null) return null;
+
+    if (pr.metrics.timeToFirstApproval !== null) return "CAN BE MERGED";
+
     if (pr.metrics.timeToFirstReview === null) return "REVIEW";
     if (pr.metrics.timeToFirstCodeUpdate === null) return "CODE UPDATE";
     if (pr.metrics.timeToFirstApproval === null) return "APPROVAL";
-
-    if (pr.closedAt === null) return "CAN BE MERGED";
 
     return null;
   };
@@ -204,7 +205,7 @@ export const PRTile: React.FC<PRTileProps> = ({ pr, index }) => {
             <Badge color="danger" content="NEXT" variant="shadow">
               <Chip
                 className="px-6 py-6 font-bold text-xl"
-                color="default"
+                color={pr.metrics.timeToFirstApproval ? "success" : "default"}
                 size="lg"
                 variant="solid"
               >
